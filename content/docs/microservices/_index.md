@@ -1,7 +1,7 @@
 ---
 title: "microservices"
 prev: "get-started"
-next: "message-chat"
+next: "message-user"
 weight: 2
 ---
 
