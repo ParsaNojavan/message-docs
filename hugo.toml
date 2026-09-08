@@ -52,13 +52,13 @@ defaultContentLanguage = 'en'
   displayPoweredBy = false
 
 [languages.en]
-  languageName = 'English'
+  label = 'English'
   weight = 1
 
 [languages.tr]
-  languageName = 'Türkçe'
+  label = 'Türkçe'
   weight = 2
 
 [languages.fa]
-  languageName = 'فارسی'
+  label = 'فارسی'
   weight = 3
