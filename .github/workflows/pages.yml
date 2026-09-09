@@ -32,6 +32,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -49,7 +53,10 @@ jobs:
           HUGO_ENVIRONMENT: production
         run: |
           hugo mod get
-          hugo --minify
+          hugo \
+            --gc \
+            --minify \
+            --baseURL "${{ steps.pages.outputs.base_url }}/"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
