@@ -47,6 +47,40 @@ weight: 2
 
 {{< /callout >}} 
 
+### Client → Server Events
+
+| Event | Auth | Message Body (Payload) | Response / Broadcast Event |
+| :--- | :---: | :--- | :--- |
+| `ping` | `JWT` | — | `pong` (Ack) |
+| `server.message` | `JWT (Admin)` | `{ text: string }` | `server.message.result` (Ack) |
+| `room.join` | `JWT` | `{ roomId: string }` | `room.join.result` / error |
+| `room.leave` | `JWT` | `{ roomId: string }` | `room.leave.result` |
+| `room.typing` | `JWT` | `{ roomId: string, isTyping: boolean }` | `room.typing.event` (To Room) / error |
+| `room.message` | `JWT` | `{ roomId: string, message: string, media?: Array, replyTo?: string, isForwarded?: boolean, ... }` | `room.message.new` (To Room) / error |
+| `room.message.react` | `JWT` | `{ reaction: ReactionDto }` | `room.message.reaction.updated` (To Room) |
+| `call.accept` | `JWT` | `{ roomId: string }` | `{ status, token, url }` (Ack) + Publishes to RTC |
+| `call.decline` | `JWT` | `{ roomId: string }` | `{ status: 'success' \| 'error' }` (Ack) |
+| `call.leave` | `JWT` | `{ roomId: string }` | `{ status: 'success' \| 'error' }` (Ack) |
+
+### Server → Client Broadcast Events (Redis)
+
+| Event | Trigger Source (Redis Channel) | Target / Scope | Description / Payload |
+| :--- | :--- | :--- | :--- |
+| `presence.update` | `presence:events` | All Connected Users | Users' online/offline status |
+| `new_notification` | `notifications:event` (type: send) | Specific User Room | Sends a new notification to recipients |
+| `seen_notification` | `notifications:event` (type: read) | Specific Room | Room notifications marked as seen |
+| `seen_messages` | `messages:event` | Specific Room | Room messages marked as seen |
+| `room.kicked` | `user:*:blocks` (Pattern) | Blocked User Socket | Force-kicks a blocked user from DM |
+| `call.incoming` | `rtc:channel` (incoming_call) | Target User Rooms | Incoming call for target users |
+| `call.user_joined` | `rtc `call.user_acuser_joining_call) | Specific Room | A user joined the call |
+| `call.user_accepted` | `rtc:channel` (user_accepted) | Specific Room | A user accepted the call |
+| `call.user_declined` | `rtc:channel` (user_declined) | Specific Room | A specific user declined the call |
+| `call.declined` | `rtc:channel` (call_declined) | Specific Room | The call was declined entirely |
+| `call.user_left` | `rtc:channel` (user_left_call) | Specific Room | A user left the voice/video call |
+| `call.ended` | `rtc:channel` (call_ended) | Specific Room | The call fully ended |
+| `call.missed` | `rtc:channel` (call_missed) / Expired | Specific Room | A missed call is recorded |
+
+
 ### Environments
 
 ```bash
