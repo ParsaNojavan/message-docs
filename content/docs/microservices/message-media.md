@@ -37,6 +37,14 @@ abstract delete(filePath: string): Promise<DataResultDto<any>>;
   This microservice is also an API, so you need to cinfigure a free port to run on it in .env file
 {{< /callout >}} 
 
+### Media Controller (`/media`)
+
+| Method | Endpoint | Auth | Params / Query |
+| :--- | :--- | :---: | :--- |
+| `POST` | `/media/upload` | `JWT` | — | — |
+| `GET` | `	/media/download/:id` | `JWT` | `id` (Param) |
+| `GET` | `/media/:id/stream` | `JWT (Token Query)` | `id` (Param), `token` (Query), `range` (Header) |
+
 
 ### Environments
 
