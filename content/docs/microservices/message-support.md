@@ -33,6 +33,29 @@ weight: 5
 
 {{< /callout >}} 
 
+### Connection / Auth
+
+| Role | Auth | Room Joined |
+| :--- | :--- | :--- |
+| `admin` | `JWT` (handshake `auth.token` / `query.token`) | `admin_room_{ownerId}` |
+| `visitor` | `API Key` (header `x-api-key` / `auth.apiKey` / `query.apiKey` + origin domain check) | `visitor_{visitorId}` |
+
+### Client → Server Events
+
+| Event | Auth | Message Body (Payload) | Response / Broadcast Event |
+| :--- | :---: | :--- | :--- |
+| `sendMessage` | `API Key (WsApiKeyGuard)` | `{ text: string }` | `newMessage` (To `admin_room_{ownerId}`) + `{ status: 'ok', message }` (Ack) |
+| `adminReply` | `JWT (Admin)` | `{ roomId: string, visitorId: string, text: string }` | `newMessage` (To `visitor_{visitorId}`) + `{ status: 'ok', message }` (Ack) |
+
+### Server → Client Broadcast Events (Redis)
+
+| Event | Trigger Source (Redis Channel) | Target / Scope | Description / Payload |
+| :--- | :--- | :--- | :--- |
+| `newRoom` | `room:created` | `admin_room_{ownerId}` | New chat room created for the owner: `{ roomId, ownerId, visitorId, updatedAt }` |
+| `newMessage` | — (emitted by `sendMessage`) | `admin_room_{ownerId}` | Visitor message saved: `{ roomId, message }` |
+| `newMessage` | — (emitted by `adminReply`) | `visitor_{visitorId}` | Admin reply saved: `{ roomId, message }` |
+
+
 ### Environments
 
 ```bash
