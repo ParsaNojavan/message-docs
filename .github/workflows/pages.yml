@@ -3,7 +3,7 @@ name: Deploy Hugo site to Pages
 on:
   push:
     branches:
-      - main # یا master اگر اسم برنچ پیش‌فرضتون master است
+      - main # در صورت نیاز به master تغییر دهید
   workflow_dispatch:
 
 permissions:
@@ -44,10 +44,6 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-
-      - name: Install Node.js dependencies
-        if: "file_exists('package.json')"
-        run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
 
       - name: Build with Hugo
         env:
